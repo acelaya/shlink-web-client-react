@@ -23,6 +23,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.11.2",
     "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-brands-svg-icons": "^5.13.0",
     "@fortawesome/free-regular-svg-icons": "^5.11.2",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
     "@fortawesome/react-fontawesome": "^0.1.5",
@@ -63,6 +64,8 @@
     "redux-actions": "^2.6.5",
     "redux-localstorage-simple": "^2.2.0",
     "redux-thunk": "^2.3.0",
+    "remotestorage-widget": "^1.5.1",
+    "remotestoragejs": "^1.2.3",
     "uuid": "^3.3.3"
   },
   "devDependencies": {

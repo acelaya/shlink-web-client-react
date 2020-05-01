@@ -15,6 +15,7 @@ import tagDeleteReducer from '../tags/reducers/tagDelete';
 import tagEditReducer from '../tags/reducers/tagEdit';
 import mercureInfoReducer from '../mercure/reducers/mercureInfo';
 import settingsReducer from '../settings/reducers/settings';
+import remoteStorageReducer from '../settings/reducers/remoteStorage';
 
 export default combineReducers({
   servers: serversReducer,
@@ -33,4 +34,5 @@ export default combineReducers({
   tagEdit: tagEditReducer,
   mercureInfo: mercureInfoReducer,
   settings: settingsReducer,
+  remoteStorage: remoteStorageReducer,
 });
