@@ -15,6 +15,7 @@ import { ShlinkApiError } from '../api/ShlinkApiError';
 import { Settings } from '../settings/reducers/settings';
 import { SelectedServer } from '../servers/data';
 import { supportsBotVisits } from '../utils/helpers/features';
+import { useEffectOnce } from '../utils/helpers/hooks';
 import SortableBarGraph from './helpers/SortableBarGraph';
 import GraphCard from './helpers/GraphCard';
 import LineChartCard from './helpers/LineChartCard';
@@ -118,7 +119,17 @@ const VisitsStats: FC<VisitsStatsProps> = ({
     }
   };
 
-  useEffect(() => cancelGetVisits, []);
+  useEffect(() => {
+    // Load the latest visit. If on first load the default date range returns no results,
+    // we'll try to fall back to one that does.
+
+    return cancelGetVisits;
+  }, []);
+  useEffectOnce(() => {
+    if (!visits.length) {
+      console.log('Default date range returned no results');
+    }
+  }, [ visits ]);
   useEffect(() => {
     getVisits({ dateRange, filter: visitsFilter });
   }, [ dateRange, visitsFilter ]);

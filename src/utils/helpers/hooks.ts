@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useSwipeable as useReactSwipeable } from 'react-swipeable';
+import { NonEmptyArray } from '../utils';
 
 const DEFAULT_DELAY = 2000;
 
@@ -50,4 +51,13 @@ export const useSwipeable = (showSidebar: () => void, hideSidebar: () => void) =
     onSwipedLeft: swipeMenuIfNoModalExists(hideSidebar),
     onSwipedRight: swipeMenuIfNoModalExists(showSidebar),
   });
+};
+
+export const useEffectOnce = (callback: Function, dependencies: NonEmptyArray<any>) => {
+  const isFirstLoad = useRef(true);
+
+  useEffect(() => {
+    isFirstLoad.current && callback();
+    isFirstLoad.current = false;
+  }, dependencies);
 };
