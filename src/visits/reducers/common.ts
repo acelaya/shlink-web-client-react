@@ -12,6 +12,8 @@ const isLastPage = ({ currentPage, pagesCount }: ShlinkPaginator): boolean => cu
 const calcProgress = (total: number, current: number): number => current * 100 / total;
 
 type VisitsLoader = (page: number, itemsPerPage: number) => Promise<ShlinkVisits>;
+type MostRecentVisitLoader = () => Promise<Visit | undefined>;
+
 interface ActionMap {
   start: string;
   large: string;
@@ -22,6 +24,7 @@ interface ActionMap {
 
 export const getVisitsWithLoader = async <T extends Action<string> & { visits: Visit[] }>(
   visitsLoader: VisitsLoader,
+  mostRecentVisitLoader: MostRecentVisitLoader,
   extraFinishActionData: Partial<T>,
   actionMap: ActionMap,
   dispatch: Dispatch,
@@ -68,9 +71,12 @@ export const getVisitsWithLoader = async <T extends Action<string> & { visits: V
   };
 
   try {
-    const visits = await loadVisits();
+    const [ visits, mostRecentVisit ] = await Promise.all([
+      loadVisits(),
+      mostRecentVisitLoader(),
+    ]);
 
-    dispatch({ ...extraFinishActionData, visits, type: actionMap.finish });
+    dispatch({ ...extraFinishActionData, visits, mostRecentVisit, type: actionMap.finish });
   } catch (e) {
     dispatch<VisitsLoadFailedAction>({ type: actionMap.error, errorData: parseApiError(e) });
   }

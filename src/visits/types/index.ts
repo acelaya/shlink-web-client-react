@@ -3,8 +3,12 @@ import { ShortUrl } from '../../short-urls/data';
 import { ProblemDetailsError } from '../../api/types';
 import { DateRange } from '../../utils/dates/types';
 
-export interface VisitsInfo {
-  visits: Visit[];
+export interface VisitsActionCommon {
+  visits?: Visit[];
+  mostRecentVisit?: Visit;
+}
+
+export interface VisitsInfo extends VisitsActionCommon {
   loading: boolean;
   loadingLarge: boolean;
   error: boolean;

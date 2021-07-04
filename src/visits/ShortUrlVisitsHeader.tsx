@@ -14,7 +14,7 @@ interface ShortUrlVisitsHeaderProps {
 
 const ShortUrlVisitsHeader = ({ shortUrlDetail, shortUrlVisits, goBack }: ShortUrlVisitsHeaderProps) => {
   const { shortUrl, loading } = shortUrlDetail;
-  const { visits } = shortUrlVisits;
+  const { visits = [] } = shortUrlVisits;
   const shortLink = shortUrl?.shortUrl ?? '';
   const longLink = shortUrl?.longUrl ?? '';
   const title = shortUrl?.title;

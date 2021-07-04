@@ -93,8 +93,8 @@ const VisitsStats: FC<VisitsStatsProps> = ({
 
     return !subPath ? `${baseUrl}${query}` : `${baseUrl}${subPath}${query}`;
   };
-  const { visits, loading, loadingLarge, error, errorData, progress } = visitsInfo;
-  const normalizedVisits = useMemo(() => normalizeVisits(visits), [ visits ]);
+  const { visits, mostRecentVisit, loading, loadingLarge, error, errorData, progress } = visitsInfo;
+  const normalizedVisits = useMemo(() => normalizeVisits(visits ?? []), [ visits ]);
   const { os, browsers, referrers, countries, cities, citiesForMap, visitedUrls } = useMemo(
     () => processStatsFromVisits(normalizedVisits),
     [ normalizedVisits ],
@@ -119,20 +119,21 @@ const VisitsStats: FC<VisitsStatsProps> = ({
     }
   };
 
-  useEffect(() => {
-    // Load the latest visit. If on first load the default date range returns no results,
-    // we'll try to fall back to one that does.
-
-    return cancelGetVisits;
-  }, []);
-  useEffectOnce(() => {
-    if (!visits.length) {
-      console.log('Default date range returned no results');
-    }
-  }, [ visits ]);
+  useEffect(() => cancelGetVisits, []);
   useEffect(() => {
     getVisits({ dateRange, filter: visitsFilter });
   }, [ dateRange, visitsFilter ]);
+  useEffectOnce(() => {
+    if (visits === undefined) {
+      return true;
+    }
+
+    if (mostRecentVisit && !visits.length) {
+      console.log('Default date range returned no results');
+    }
+
+    return false;
+  }, [ visits ]);
 
   const renderVisitsContent = () => {
     if (loadingLarge) {
@@ -297,7 +298,7 @@ const VisitsStats: FC<VisitsStatsProps> = ({
               />
             </div>
           </div>
-          {visits.length > 0 && (
+          {(visits ?? []).length > 0 && (
             <div className="col-lg-5 col-xl-6 mt-3 mt-lg-0">
               <div className="d-flex">
                 <Button

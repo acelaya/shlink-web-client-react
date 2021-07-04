@@ -11,7 +11,7 @@ interface TagVisitsHeaderProps {
 }
 
 const TagVisitsHeader = ({ tagVisits, goBack, colorGenerator }: TagVisitsHeaderProps) => {
-  const { visits, tag } = tagVisits;
+  const { visits = [], tag } = tagVisits;
 
   const visitsStatsTitle = (
     <span className="d-flex align-items-center justify-content-center">

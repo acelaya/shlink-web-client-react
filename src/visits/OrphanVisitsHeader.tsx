@@ -8,7 +8,7 @@ interface OrphanVisitsHeaderProps {
 }
 
 export const OrphanVisitsHeader = ({ orphanVisits, goBack }: OrphanVisitsHeaderProps) => {
-  const { visits } = orphanVisits;
+  const { visits = [] } = orphanVisits;
 
   return <VisitsHeader title="Orphan visits" goBack={goBack} visits={visits} />;
 };

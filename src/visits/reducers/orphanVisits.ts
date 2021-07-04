@@ -3,6 +3,7 @@ import {
   OrphanVisit,
   OrphanVisitType,
   Visit,
+  VisitsActionCommon,
   VisitsInfo,
   VisitsLoadFailedAction,
   VisitsLoadProgressChangedAction,
@@ -24,9 +25,7 @@ export const GET_ORPHAN_VISITS_CANCEL = 'shlink/orphanVisits/GET_ORPHAN_VISITS_C
 export const GET_ORPHAN_VISITS_PROGRESS_CHANGED = 'shlink/orphanVisits/GET_ORPHAN_VISITS_PROGRESS_CHANGED';
 /* eslint-enable padding-line-between-statements */
 
-export interface OrphanVisitsAction extends Action<string> {
-  visits: Visit[];
-}
+export interface OrphanVisitsAction extends Action<string>, VisitsActionCommon {}
 
 type OrphanVisitsCombinedAction = OrphanVisitsAction
 & VisitsLoadProgressChangedAction
@@ -34,7 +33,7 @@ type OrphanVisitsCombinedAction = OrphanVisitsAction
 & VisitsLoadFailedAction;
 
 const initialState: VisitsInfo = {
-  visits: [],
+  visits: undefined, // Used undefined initial state to track when the visits were loaded for the first time
   loading: false,
   loadingLarge: false,
   error: false,
@@ -45,12 +44,12 @@ const initialState: VisitsInfo = {
 export default buildReducer<VisitsInfo, OrphanVisitsCombinedAction>({
   [GET_ORPHAN_VISITS_START]: () => ({ ...initialState, loading: true }),
   [GET_ORPHAN_VISITS_ERROR]: (_, { errorData }) => ({ ...initialState, error: true, errorData }),
-  [GET_ORPHAN_VISITS]: (_, { visits }) => ({ ...initialState, visits }),
+  [GET_ORPHAN_VISITS]: (_, { visits, mostRecentVisit }) => ({ ...initialState, visits, mostRecentVisit }),
   [GET_ORPHAN_VISITS_LARGE]: (state) => ({ ...state, loadingLarge: true }),
   [GET_ORPHAN_VISITS_CANCEL]: (state) => ({ ...state, cancelLoad: true }),
   [GET_ORPHAN_VISITS_PROGRESS_CHANGED]: (state, { progress }) => ({ ...state, progress }),
   [CREATE_VISITS]: (state, { createdVisits }) => {
-    const { visits } = state;
+    const { visits = [] } = state;
     const newVisits = createdVisits.map(({ visit }) => visit);
 
     return { ...state, visits: [ ...newVisits, ...visits ] };
@@ -59,6 +58,8 @@ export default buildReducer<VisitsInfo, OrphanVisitsCombinedAction>({
 
 const matchesType = (visit: OrphanVisit, orphanVisitsType?: OrphanVisitType) =>
   !orphanVisitsType || orphanVisitsType === visit.type;
+const filterVisitsByType = (visits: Visit[], orphanVisitsType?: OrphanVisitType): Visit[] =>
+  visits.filter((visit) => isOrphanVisit(visit) && matchesType(visit, orphanVisitsType));
 
 export const getOrphanVisits = (buildShlinkApiClient: ShlinkApiClientBuilder) => (
   query: ShlinkVisitsParams = {},
@@ -67,10 +68,12 @@ export const getOrphanVisits = (buildShlinkApiClient: ShlinkApiClientBuilder) =>
   const { getOrphanVisits } = buildShlinkApiClient(getState);
   const visitsLoader = async (page: number, itemsPerPage: number) => getOrphanVisits({ ...query, page, itemsPerPage })
     .then((result) => {
-      const visits = result.data.filter((visit) => isOrphanVisit(visit) && matchesType(visit, orphanVisitsType));
+      const visits = filterVisitsByType(result.data, orphanVisitsType);
 
       return { ...result, data: visits };
     });
+  const mostRecentVisitLoader = async () => getOrphanVisits({ itemsPerPage: 1 })
+    .then(({ data }) => filterVisitsByType(data, orphanVisitsType)[0]);
   const shouldCancel = () => getState().orphanVisits.cancelLoad;
   const actionMap = {
     start: GET_ORPHAN_VISITS_START,
@@ -80,7 +83,7 @@ export const getOrphanVisits = (buildShlinkApiClient: ShlinkApiClientBuilder) =>
     progress: GET_ORPHAN_VISITS_PROGRESS_CHANGED,
   };
 
-  return getVisitsWithLoader(visitsLoader, {}, actionMap, dispatch, shouldCancel);
+  return getVisitsWithLoader(visitsLoader, mostRecentVisitLoader, {}, actionMap, dispatch, shouldCancel);
 };
 
 export const cancelGetOrphanVisits = buildActionCreator(GET_ORPHAN_VISITS_CANCEL);

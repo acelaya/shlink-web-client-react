@@ -53,11 +53,10 @@ export const useSwipeable = (showSidebar: () => void, hideSidebar: () => void) =
   });
 };
 
-export const useEffectOnce = (callback: Function, dependencies: NonEmptyArray<any>) => {
+export const useEffectOnce = (callback: () => boolean, dependencies: NonEmptyArray<any>) => {
   const isFirstLoad = useRef(true);
 
   useEffect(() => {
-    isFirstLoad.current && callback();
-    isFirstLoad.current = false;
+    isFirstLoad.current && (isFirstLoad.current = callback());
   }, dependencies);
 };
