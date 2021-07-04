@@ -44,7 +44,7 @@ export default buildReducer<TagVisits, TagsVisitsCombinedAction>({
   [GET_TAG_VISITS_ERROR]: (_, { errorData }) => ({ ...initialState, error: true, errorData }),
   [GET_TAG_VISITS]: (_, { visits, mostRecentVisit, tag }) => ({ ...initialState, visits, mostRecentVisit, tag }),
   [GET_TAG_VISITS_LARGE]: (state) => ({ ...state, loadingLarge: true }),
-  [GET_TAG_VISITS_CANCEL]: (state) => ({ ...state, cancelLoad: true }),
+  [GET_TAG_VISITS_CANCEL]: (state) => ({ ...state, visits: undefined, cancelLoad: true }),
   [GET_TAG_VISITS_PROGRESS_CHANGED]: (state, { progress }) => ({ ...state, progress }),
   [CREATE_VISITS]: (state, { createdVisits }) => {
     const { tag, visits = [] } = state;

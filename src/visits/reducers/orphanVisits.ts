@@ -46,7 +46,7 @@ export default buildReducer<VisitsInfo, OrphanVisitsCombinedAction>({
   [GET_ORPHAN_VISITS_ERROR]: (_, { errorData }) => ({ ...initialState, error: true, errorData }),
   [GET_ORPHAN_VISITS]: (_, { visits, mostRecentVisit }) => ({ ...initialState, visits, mostRecentVisit }),
   [GET_ORPHAN_VISITS_LARGE]: (state) => ({ ...state, loadingLarge: true }),
-  [GET_ORPHAN_VISITS_CANCEL]: (state) => ({ ...state, cancelLoad: true }),
+  [GET_ORPHAN_VISITS_CANCEL]: (state) => ({ ...state, visits: undefined, cancelLoad: true }),
   [GET_ORPHAN_VISITS_PROGRESS_CHANGED]: (state, { progress }) => ({ ...state, progress }),
   [CREATE_VISITS]: (state, { createdVisits }) => {
     const { visits = [] } = state;
