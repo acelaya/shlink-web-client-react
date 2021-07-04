@@ -76,7 +76,7 @@ export const getTagVisits = (buildShlinkApiClient: ShlinkApiClientBuilder) => (
     progress: GET_TAG_VISITS_PROGRESS_CHANGED,
   };
 
-  return getVisitsWithLoader(visitsLoader, lastVisitLoader, extraFinishActionData, actionMap, dispatch, shouldCancel);
+  return getVisitsWithLoader(visitsLoader, lastVisitLoader, dispatch, shouldCancel, actionMap, extraFinishActionData);
 };
 
 export const cancelGetTagVisits = buildActionCreator(GET_TAG_VISITS_CANCEL);

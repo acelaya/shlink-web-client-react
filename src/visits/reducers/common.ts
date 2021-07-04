@@ -25,10 +25,10 @@ interface ActionMap {
 export const getVisitsWithLoader = async <T extends VisitsActionCommon>(
   visitsLoader: VisitsLoader,
   mostRecentVisitLoader: MostRecentVisitLoader,
-  extraFinishActionData: Partial<T>,
-  actionMap: ActionMap,
   dispatch: Dispatch,
   shouldCancel: () => boolean,
+  actionMap: ActionMap,
+  extraFinishActionData: Partial<T> = {},
 ) => {
   dispatch({ type: actionMap.start });
 

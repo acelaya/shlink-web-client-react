@@ -81,7 +81,7 @@ export const getOrphanVisits = (buildShlinkApiClient: ShlinkApiClientBuilder) =>
     progress: GET_ORPHAN_VISITS_PROGRESS_CHANGED,
   };
 
-  return getVisitsWithLoader(visitsLoader, mostRecentVisitLoader, {}, actionMap, dispatch, shouldCancel);
+  return getVisitsWithLoader(visitsLoader, mostRecentVisitLoader, dispatch, shouldCancel, actionMap);
 };
 
 export const cancelGetOrphanVisits = buildActionCreator(GET_ORPHAN_VISITS_CANCEL);

@@ -82,7 +82,7 @@ export const getShortUrlVisits = (buildShlinkApiClient: ShlinkApiClientBuilder) 
     progress: GET_SHORT_URL_VISITS_PROGRESS_CHANGED,
   };
 
-  return getVisitsWithLoader(visitsLoader, lastVisitLoader, extraFinishActionData, actionMap, dispatch, shouldCancel);
+  return getVisitsWithLoader(visitsLoader, lastVisitLoader, dispatch, shouldCancel, actionMap, extraFinishActionData);
 };
 
 export const cancelGetShortUrlVisits = buildActionCreator(GET_SHORT_URL_VISITS_CANCEL);
