@@ -1,7 +1,7 @@
 import { flatten, prop, range, splitEvery } from 'ramda';
-import { Action, Dispatch } from 'redux';
+import { Dispatch } from 'redux';
 import { ShlinkPaginator, ShlinkVisits } from '../../api/types';
-import { Visit, VisitsLoadFailedAction } from '../types';
+import { Visit, VisitsActionCommon, VisitsLoadFailedAction } from '../types';
 import { parseApiError } from '../../api/utils';
 
 const ITEMS_PER_PAGE = 5000;
@@ -22,7 +22,7 @@ interface ActionMap {
   progress: string;
 }
 
-export const getVisitsWithLoader = async <T extends Action<string> & { visits: Visit[] }>(
+export const getVisitsWithLoader = async <T extends VisitsActionCommon>(
   visitsLoader: VisitsLoader,
   mostRecentVisitLoader: MostRecentVisitLoader,
   extraFinishActionData: Partial<T>,

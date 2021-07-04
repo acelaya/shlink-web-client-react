@@ -1,4 +1,4 @@
-import { Action, Dispatch } from 'redux';
+import { Dispatch } from 'redux';
 import { shortUrlMatches } from '../../short-urls/helpers';
 import { VisitsActionCommon, VisitsInfo, VisitsLoadFailedAction, VisitsLoadProgressChangedAction } from '../types';
 import { ShortUrlIdentifier } from '../../short-urls/data';
@@ -20,7 +20,7 @@ export const GET_SHORT_URL_VISITS_PROGRESS_CHANGED = 'shlink/shortUrlVisits/GET_
 
 export interface ShortUrlVisits extends VisitsInfo, ShortUrlIdentifier {}
 
-interface ShortUrlVisitsAction extends Action<string>, VisitsActionCommon, ShortUrlIdentifier {}
+interface ShortUrlVisitsAction extends VisitsActionCommon, ShortUrlIdentifier {}
 
 type ShortUrlVisitsCombinedAction = ShortUrlVisitsAction
 & VisitsLoadProgressChangedAction

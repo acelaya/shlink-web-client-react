@@ -1,4 +1,4 @@
-import { Action, Dispatch } from 'redux';
+import { Dispatch } from 'redux';
 import { VisitsActionCommon, VisitsInfo, VisitsLoadFailedAction, VisitsLoadProgressChangedAction } from '../types';
 import { buildActionCreator, buildReducer } from '../../utils/helpers/redux';
 import { ShlinkApiClientBuilder } from '../../api/services/ShlinkApiClientBuilder';
@@ -20,7 +20,7 @@ export interface TagVisits extends VisitsInfo {
   tag: string;
 }
 
-export interface TagVisitsAction extends Action<string>, VisitsActionCommon {
+export interface TagVisitsAction extends VisitsActionCommon {
   tag: string;
 }
 

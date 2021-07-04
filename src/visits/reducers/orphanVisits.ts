@@ -1,4 +1,4 @@
-import { Action, Dispatch } from 'redux';
+import { Dispatch } from 'redux';
 import {
   OrphanVisit,
   OrphanVisitType,
@@ -25,9 +25,7 @@ export const GET_ORPHAN_VISITS_CANCEL = 'shlink/orphanVisits/GET_ORPHAN_VISITS_C
 export const GET_ORPHAN_VISITS_PROGRESS_CHANGED = 'shlink/orphanVisits/GET_ORPHAN_VISITS_PROGRESS_CHANGED';
 /* eslint-enable padding-line-between-statements */
 
-export interface OrphanVisitsAction extends Action<string>, VisitsActionCommon {}
-
-type OrphanVisitsCombinedAction = OrphanVisitsAction
+type OrphanVisitsCombinedAction = VisitsActionCommon
 & VisitsLoadProgressChangedAction
 & CreateVisitsAction
 & VisitsLoadFailedAction;
