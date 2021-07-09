@@ -9,7 +9,13 @@ import { Location } from 'history';
 import classNames from 'classnames';
 import { DateRangeSelector } from '../utils/dates/DateRangeSelector';
 import Message from '../utils/Message';
-import { DateInterval, DateRange, intervalToDateRange } from '../utils/dates/types';
+import {
+  DateInterval,
+  DateRange,
+  dateRangeOrIntervalForDate,
+  intervalToDateRange,
+  rangeOrIntervalToString,
+} from '../utils/dates/types';
 import { Result } from '../utils/Result';
 import { ShlinkApiError } from '../api/ShlinkApiError';
 import { Settings } from '../settings/reducers/settings';
@@ -81,8 +87,10 @@ const VisitsStats: FC<VisitsStatsProps> = ({
   selectedServer,
   isOrphanVisits = false,
 }) => {
-  const initialInterval: DateInterval = settings.visits?.defaultInterval ?? 'last30Days';
-  const [ dateRange, setDateRange ] = useState<DateRange>(intervalToDateRange(initialInterval));
+  const [ selectedInterval, setSelectedInterval ] = useState<DateInterval | DateRange>(
+    settings.visits?.defaultInterval ?? 'last30Days',
+  );
+  const [ dateRange, setDateRange ] = useState<DateRange>(intervalToDateRange(selectedInterval));
   const [ highlightedVisits, setHighlightedVisits ] = useState<NormalizedVisit[]>([]);
   const [ highlightedLabel, setHighlightedLabel ] = useState<string | undefined>();
   const [ visitsFilter, setVisitsFilter ] = useState<VisitsFilter>({});
@@ -129,7 +137,11 @@ const VisitsStats: FC<VisitsStatsProps> = ({
     }
 
     if (mostRecentVisit && !visits.length) {
-      console.log('Default date range returned no results');
+      const { date } = mostRecentVisit;
+      const dateRangeOrInterval = dateRangeOrIntervalForDate(date);
+
+      setSelectedInterval(dateRangeOrInterval);
+      setDateRange(intervalToDateRange(dateRangeOrInterval));
     }
 
     return false;
@@ -283,8 +295,9 @@ const VisitsStats: FC<VisitsStatsProps> = ({
             <div className="d-md-flex">
               <div className="flex-fill">
                 <DateRangeSelector
+                  key={rangeOrIntervalToString(selectedInterval)}
                   disabled={loading}
-                  initialDateRange={initialInterval}
+                  initialDateRange={selectedInterval}
                   defaultText="All visits"
                   onDatesChange={setDateRange}
                 />

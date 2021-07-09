@@ -1,6 +1,6 @@
-import { subDays, startOfDay, endOfDay } from 'date-fns';
+import { subDays, startOfDay, endOfDay, parseISO, differenceInDays } from 'date-fns';
 import { filter, isEmpty } from 'ramda';
-import { formatInternational } from '../../helpers/date';
+import { formatInternational, isDateObject } from '../../helpers/date';
 
 export interface DateRange {
   startDate?: Date | null;
@@ -22,6 +22,16 @@ const INTERVAL_TO_STRING_MAP: Record<DateInterval, string> = {
   last90Days: 'Last 90 days',
   last180days: 'Last 180 days',
   last365Days: 'Last 365 days',
+};
+
+const INTERVAL_TO_DAYS_MAP: Record<DateInterval, number> = {
+  today: 0,
+  yesterday: 1,
+  last7Days: 7,
+  last30Days: 30,
+  last90Days: 90,
+  last180days: 180,
+  last365Days: 365,
 };
 
 export const DATE_INTERVALS: DateInterval[] = Object.keys(INTERVAL_TO_STRING_MAP) as DateInterval[];
@@ -56,9 +66,13 @@ export const rangeOrIntervalToString = (range?: DateRange | DateInterval): strin
 
 const startOfDaysAgo = (daysAgo: number) => startOfDay(subDays(new Date(), daysAgo));
 
-export const intervalToDateRange = (dateInterval?: DateInterval): DateRange => {
+export const intervalToDateRange = (dateInterval?: DateInterval | DateRange): DateRange => {
   if (!dateInterval) {
     return {};
+  }
+
+  if (!rangeIsInterval(dateInterval)) {
+    return dateInterval;
   }
 
   switch (dateInterval) {
@@ -79,4 +93,31 @@ export const intervalToDateRange = (dateInterval?: DateInterval): DateRange => {
   }
 
   return {};
+};
+
+export const dateRangeOrIntervalForDate = (date: Date | string): DateRange | DateInterval => {
+  const theDate = isDateObject(date) ? date : parseISO(date);
+  const daysBack = (days: number) => subDays(new Date(), days);
+
+  if (differenceInDays(daysBack(0), theDate) < 0) {
+    return 'today';
+  } else if (differenceInDays(daysBack(1), theDate) < 0) {
+    return 'yesterday';
+  } else if (differenceInDays(daysBack(7), theDate) < 0) {
+    return 'last7Days';
+  } else if (differenceInDays(daysBack(30), theDate) < 0) {
+    return 'last30Days';
+  } else if (differenceInDays(daysBack(90), theDate) < 0) {
+    return 'last90Days';
+  } else if (differenceInDays(daysBack(180), theDate) < 0) {
+    return 'last180days';
+  } else if (differenceInDays(daysBack(365), theDate) < 0) {
+    return 'last365Days';
+  }
+
+  const interval = Object.entries(INTERVAL_TO_DAYS_MAP).find(
+    (_, days: number) => differenceInDays(daysBack(days), theDate) < 0,
+  ) as [DateInterval, number] | undefined;
+
+  return interval?.[0] ?? { startDate: startOfDay(theDate) };
 };
